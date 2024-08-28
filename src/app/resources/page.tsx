@@ -1,13 +1,13 @@
+import React from 'react'
 import fs from 'fs';
 import path from 'path';
 import ResourceList from '@/components/ResourceList'
-
+import process from 'process';
 
 export const metadata = {
   title: 'Resources',
   description: 'Explore our curated list of resources for web development, GitHub, and more.',
 }
-
 
 export default function Resources() {
   const resourcesPath = path.join(process.cwd(), 'data', 'json', 'resources.json');

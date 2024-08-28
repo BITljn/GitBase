@@ -1,3 +1,4 @@
+import React from 'react'
 import ArticleList from '@/components/ArticleList'
 import { getSortedPostsData } from '@/lib/posts';
 
@@ -8,8 +9,6 @@ export const metadata = {
 
 export default function Articles() {
   const allPostsData = getSortedPostsData();
-
-
   return (
     <div className="container mx-auto py-12">
       <ArticleList articles={allPostsData} showMoreLink={false} />

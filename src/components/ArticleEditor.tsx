@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 export default function ArticleEditor() {
   const [article, setArticle] = useState({ title: '', description: '', content: '', path: '' });
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string|null>(null);
   const searchParams = useSearchParams();
   const path = searchParams.get('path');
 
@@ -22,7 +23,7 @@ export default function ArticleEditor() {
     }
   }, [path]);
 
-  const fetchArticle = async (articlePath) => {
+  const fetchArticle = async (articlePath : string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -40,7 +41,7 @@ export default function ArticleEditor() {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e : React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setArticle({ ...article, [name]: value });
   };

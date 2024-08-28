@@ -12,3 +12,8 @@ export interface article {
     date: string;
     path: string;
 }
+export interface Metadata {
+    title: string;
+    description: string;
+    date: string;
+}

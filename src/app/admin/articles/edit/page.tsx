@@ -3,9 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React from 'react';
 
 // Dynamically import the component that uses useSearchParams
 const ArticleEditor = dynamic(() => import('@/components/ArticleEditor'), {
@@ -14,7 +12,7 @@ const ArticleEditor = dynamic(() => import('@/components/ArticleEditor'), {
 
 export default function ArticleEditorPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {

@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
 import matter from 'gray-matter';
+import { OctokitError } from '@/types/error'
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN
 });
 
-const owner = process.env.GITHUB_OWNER;
-const repo = process.env.GITHUB_REPO;
+const owner = process.env.GITHUB_OWNER || '';
+const repo = process.env.GITHUB_REPO || '';
 const articlesJsonPath = 'data/json/articles.json';
 const mdFolderPath = 'data/md';
 
-export async function POST(request) {
+export async function POST(request : Request) {
   const { title, description, content, slug } = await request.json();
 
   // Validate slug
@@ -30,8 +31,9 @@ export async function POST(request) {
         path,
       });
       return NextResponse.json({ error: 'Article with this slug already exists' }, { status: 400 });
-    } catch (error) {
-      if (error.status !== 404) {
+    } catch (error : unknown) {
+      // 确保 error 是 Error 类型，并处理特定错误
+      if (error instanceof Error && (error as OctokitError).status !== 404) {
         throw error;
       }
     }
@@ -65,49 +67,70 @@ export async function POST(request) {
 async function syncArticles() {
   try {
     // Fetch all MD files
-    const { data: files } = await octokit.repos.getContent({
+    const response = await octokit.repos.getContent({
       owner,
       repo,
       path: mdFolderPath,
     });
 
-    const mdFiles = files.filter(file => file.name.endsWith('.md'));
+    const data = response.data
+    if (!Array.isArray(data)) {
+      return;
+    }
+
+    const mdFiles = data.filter(file => file.name.endsWith('.md'));
 
     const articles = await Promise.all(mdFiles.map(async file => {
-      const { data } = await octokit.repos.getContent({
+      const artiResp = await octokit.repos.getContent({
         owner,
         repo,
         path: file.path,
       });
 
-      const content = Buffer.from(data.content, 'base64').toString('utf8');
-      const { data: frontMatter, content: articleContent } = matter(content);
+      const artiData = artiResp.data;
+      if (Array.isArray(artiData) || artiData.type !== 'file') {
+        return;
+      }
+
+      // read single article
+      const content = Buffer.from(artiData.content, 'base64').toString('utf8');
+      const { data: frontMatter } = matter(content);
 
       // Fetch the last commit for this file
-      const { data: commits } = await octokit.repos.listCommits({
+      const commitResp = await octokit.repos.listCommits({
         owner,
         repo,
         path: file.path,
         per_page: 1
       });
+      const commits = commitResp.data;
 
-      const lastModified = commits[0]?.commit.committer.date || data.sha;
+      if (Array.isArray(commits) && commits.length > 0 && commits[0]) {
+        const lastModified = commits[0].commit.committer?.date || artiData.sha;
 
-      return {
-        title: frontMatter.title,
-        description: frontMatter.description,
-        date: frontMatter.date,
-        lastModified: lastModified,
-        path: file.path,
-      };
+        return {
+          title: frontMatter.title,
+          description: frontMatter.description,
+          date: frontMatter.date,
+          lastModified: lastModified,
+          path: file.path,
+        };
+      }
     }));
 
     // Update articles.json
-    const { data: currentFile } = await octokit.repos.getContent({
+    //const { data: currentFile } = await octokit.repos.getContent({
+    const artiJsonResp = await octokit.repos.getContent({
       owner,
       repo,
       path: articlesJsonPath,
     });
+
+    const artiJsonRespData = artiJsonResp.data
+    if (Array.isArray(artiJsonRespData) || artiJsonRespData.type !== 'file') {
+      return;
+    }
+    
 
     await octokit.repos.createOrUpdateFileContents({
       owner,
@@ -115,7 +138,7 @@ async function syncArticles() {
       path: articlesJsonPath,
       message: 'Sync articles',
       content: Buffer.from(JSON.stringify(articles, null, 2)).toString('base64'),
-      sha: currentFile.sha,
+      sha: artiJsonRespData.sha,
     });
 
   } catch (error) {

@@ -1,4 +1,5 @@
 // components/Footer.js
+import React from 'react'
 import Link from 'next/link';
 
 export function Footer() {
@@ -36,17 +37,17 @@ export function Footer() {
             <h3 className="text-sm font-semibold text-gray-600 tracking-wider uppercase">Connect</h3>
             <ul className="mt-4 space-y-4">
               <li>
-                <a href="https://gitbase.app/" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
+                <a href="https://gitbase.app/" target="_blank" rel="noreferrer" className="text-base text-gray-500 hover:text-gray-900">
                   GitBase
                 </a>
               </li>
               <li>
-                <a href="https://github.com/qiayue/gitbase" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
+                <a href="https://github.com/qiayue/gitbase" target="_blank" rel="noreferrer" className="text-base text-gray-500 hover:text-gray-900">
                   GitHub
                 </a>
               </li>
               <li>
-                <a href="https://twitter.com/gefei55" target="_blank" className="text-base text-gray-500 hover:text-gray-900">
+                <a href="https://twitter.com/gefei55" target="_blank" rel="noreferrer" className="text-base text-gray-500 hover:text-gray-900">
                   Twitter
                 </a>
               </li>

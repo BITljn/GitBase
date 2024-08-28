@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import React from 'react';
+import PropTypes from 'prop-types'; // 添加 PropTypes 导入
 
-export default function LoginModal({ isOpen, onClose, onLogin }) {
+LoginModal.propTypes = { // 添加 props 验证
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
+};
+export default function LoginModal({ isOpen, onClose, onLogin }: { isOpen: boolean; onClose: () => void; onLogin: () => void; }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     try {
@@ -55,3 +62,4 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     </div>
   );
 }
+

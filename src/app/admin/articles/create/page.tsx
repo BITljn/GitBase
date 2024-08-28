@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -9,11 +10,11 @@ import { Alert } from "@/components/ui/alert";
 
 export default function CreateArticlePage() {
   const [article, setArticle] = useState({ title: '', description: '', content: '', slug: '' });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e : React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setArticle({ ...article, [name]: value });
   };
@@ -35,9 +36,12 @@ export default function CreateArticlePage() {
       }
 
       router.push('/admin/articles');
-    } catch (error) {
-      console.error('Error creating article:', error);
-      setError(error.message);
+    } catch (error : unknown) {
+     
+      if (error instanceof Error) {
+        console.error('Error creating article:', error);
+        setError((error as Error).message);
+      }
     } finally {
       setIsLoading(false);
     }

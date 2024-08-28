@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -12,7 +13,7 @@ export default function AdminPage() {
   const [newResource, setNewResource] = useState({ name: '', description: '', url: '' });
   const [editingIndex, setEditingIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
@@ -24,10 +25,12 @@ export default function AdminPage() {
       } else {
         setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error checking auth:', error);
-      setError('Failed to authenticate. Please try again.');
-      setIsLoading(false);
+    } catch (error : unknown) {
+      if (error instanceof Error) {
+        console.error('Error checking auth:', error);
+        setError('Failed to authenticate. Please try again.');
+        setIsLoading(false);
+      }
     }
   }, [router]);
 
@@ -54,7 +57,7 @@ export default function AdminPage() {
     }
   };
 
-  const handleInputChange = (e, index = null) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number | null = null) => {
     const { name, value } = e.target;
     if (index !== null) {
       const updatedResources = [...resources];

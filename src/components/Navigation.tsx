@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Github } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import React from 'react'
 
 const navItems = [
   { path: '/', label: 'Home' },

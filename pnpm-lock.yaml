@@ -23,6 +23,9 @@ importers:
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
+      '@types/prop-types':
+        specifier: ^15.7.12
+        version: 15.7.12
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -50,6 +53,9 @@ importers:
       next:
         specifier: 14.2.5
         version: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      prop-types:
+        specifier: ^15.8.1
+        version: 15.8.1
       react:
         specifier: ^18
         version: 18.3.1

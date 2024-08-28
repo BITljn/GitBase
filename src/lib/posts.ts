@@ -3,14 +3,9 @@ import path from 'path'
 import { marked } from 'marked';
 import yaml from 'js-yaml';
 import { article } from '@/types/resources';
+import { Metadata } from '@/types/resources';
 
 const postsDirectory = path.join(process.cwd(), 'data', 'md')
-
-interface Metadata {
-  title: string;
-  description: string;
-  date: string;
-}
 
 export function getSortedPostsData() : article[]{
   // Get file names under /data/md

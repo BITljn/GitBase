@@ -1,16 +1,23 @@
-// components/ResourceList.js
-import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
+// components/ResourceList.tsx
+import React from 'react';
+import Link from 'next/link';
+import { ExternalLink } from 'lucide-react';
+import { resource } from '@/types/resources';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card"
+} from '@/components/ui/card';
 
-export default function ResourceList({ resources, showMoreLink = true }) {
+interface ResourceListProps {
+  resources: resource[];
+  showMoreLink?: boolean;
+}
+
+export default function ResourceList({ resources, showMoreLink = true }: ResourceListProps) {
   return (
-    <section>
+    <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold tracking-tighter">Resources</h2>
         {showMoreLink && (
@@ -19,13 +26,14 @@ export default function ResourceList({ resources, showMoreLink = true }) {
           </Link>
         )}
       </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {resources.map((resource, index) => (
           <Card key={index}>
             <CardHeader>
-              <a 
-                href={resource.url} 
-                target="_blank" 
+              <a
+                href={resource.url}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center gap-1"
               >
@@ -37,6 +45,6 @@ export default function ResourceList({ resources, showMoreLink = true }) {
           </Card>
         ))}
       </div>
-    </section>
-  )
+    </div>
+  );
 }

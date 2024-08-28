@@ -1,4 +1,5 @@
 // components/ArticleList.js
+import React from 'react'
 import Link from 'next/link'
 import {
   Card,
@@ -6,8 +7,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
+import { article } from '@/types/resources'
 
-export default function ArticleList({ articles, showMoreLink = true }) {
+interface ArticleListProps {
+  articles: article[]
+  showMoreLink?: boolean
+}
+
+export default function ArticleList({ articles, showMoreLink = true } : ArticleListProps) {
   return (
     <section>
       <div className="flex justify-between items-center mb-6">

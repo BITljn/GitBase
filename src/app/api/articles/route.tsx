@@ -5,7 +5,7 @@ import {
   fetchArticleJsonObject,
   fetchAllMarkdownFilesFromGithub,
   updateArticleOnGithub,
-} from "@/lib/utils";
+} from "@/lib/github";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,

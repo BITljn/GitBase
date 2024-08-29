@@ -4,9 +4,11 @@ import process from "process";
 const JWT_SECRET = process.env.JWT_SECRET;
 const DOMAIN = process.env.DOMAIN || "localhost";
 
-export function verifyToken(token) {
+export function verifyToken(token: string) {
+  if (!token) return false;
+  if (!JWT_SECRET) return false;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
 
     // Check if we're in a development environment
     if (process.env.NODE_ENV === "development") {
@@ -30,7 +32,7 @@ export function createToken() {
       authenticated: true,
       domain: DOMAIN,
     },
-    JWT_SECRET,
+    JWT_SECRET || "",
     { expiresIn: "1h" }
   );
 }

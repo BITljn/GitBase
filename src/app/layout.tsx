@@ -1,22 +1,22 @@
-import './globals.css'
-import React from 'react';
-import { Inter } from 'next/font/google'
-import { Layout } from '@/components/Layout'
-import { Metadata } from 'next'
+import "./globals.css";
+import React from "react";
+import { Inter } from "next/font/google";
+import { Layout } from "@/components/Layout";
+import { Metadata } from "next";
 
-const inter = Inter({ subsets: ['latin'] })
-
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'GitBase',
-    template: '%s | GitBase'
+    default: "GitBase",
+    template: "%s | GitBase",
   },
-  description: 'Open source dynamic website without database, built with Next.js and GitHub API',
-}
+  description:
+    "Open source dynamic website without database, built with Next.js and GitHub API",
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
@@ -26,5 +26,5 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Layout>{children}</Layout>
       </body>
     </html>
-  )
+  );
 }

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
-import React from 'react';
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+import React from "react";
 
 // Dynamically import the component that uses useSearchParams
-const ArticleEditor = dynamic(() => import('@/components/ArticleEditor'), {
+const ArticleEditor = dynamic(() => import("@/components/ArticleEditor"), {
   ssr: false,
 });
 
@@ -17,16 +17,16 @@ export default function ArticleEditorPage() {
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetch('/api/check-auth');
+      const response = await fetch("/api/check-auth");
       const data = await response.json();
       if (!data.isLoggedIn) {
-        router.push('/login');
+        router.push("/login");
       } else {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('Error checking auth:', error);
-      setError('Failed to authenticate. Please try again.');
+      console.error("Error checking auth:", error);
+      setError("Failed to authenticate. Please try again.");
       setIsLoading(false);
     }
   }, [router]);

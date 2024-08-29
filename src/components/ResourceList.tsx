@@ -1,27 +1,33 @@
 // components/ResourceList.tsx
-import React from 'react';
-import Link from 'next/link';
-import { ExternalLink } from 'lucide-react';
-import { resource } from '@/types/resources';
+import React from "react";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
+import { resourceJsonMeta } from "@/types/resources";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
 interface ResourceListProps {
-  resources: resource[];
+  resources: resourceJsonMeta[];
   showMoreLink?: boolean;
 }
 
-export default function ResourceList({ resources, showMoreLink = true }: ResourceListProps) {
+export default function ResourceList({
+  resources,
+  showMoreLink = true,
+}: ResourceListProps) {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold tracking-tighter">Resources</h2>
         {showMoreLink && (
-          <Link href="/resources" className="text-blue-600 hover:text-blue-800 transition-colors">
+          <Link
+            href="/resources"
+            className="text-blue-600 hover:text-blue-800 transition-colors"
+          >
             More resources →
           </Link>
         )}

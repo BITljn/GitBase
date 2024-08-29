@@ -1,28 +1,43 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import React from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import React from "react";
 
 export default function AdminArticlesPage() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<
+    {
+      title: string;
+      description: string;
+      date: string;
+      lastModified: string;
+      path: string;
+    }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetch('/api/check-auth');
+      const response = await fetch("/api/check-auth");
       const data = await response.json();
       if (!data.isLoggedIn) {
-        router.push('/login');
+        router.push("/login");
       }
     } catch (error) {
-      console.error('Error checking auth:', error);
-      router.push('/login');
+      console.error("Error checking auth:", error);
+      router.push("/login");
     }
   }, [router]);
 
@@ -30,15 +45,15 @@ export default function AdminArticlesPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/articles${sync ? '?sync=true' : ''}`);
+      const response = await fetch(`/api/articles${sync ? "?sync=true" : ""}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch articles');
+        throw new Error("Failed to fetch articles");
       }
       const data = await response.json();
       setArticles(data);
     } catch (error) {
-      console.error('Error fetching articles:', error);
-      setError('Failed to fetch articles. Please try again.');
+      console.error("Error fetching articles:", error);
+      setError("Failed to fetch articles. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +79,9 @@ export default function AdminArticlesPage() {
           <Button>Back to Admin Dashboard</Button>
         </Link>
         <div>
-          <Button onClick={handleSync} className="mr-2">Sync Articles</Button>
+          <Button onClick={handleSync} className="mr-2">
+            Sync Articles
+          </Button>
           <Link href="/admin/articles/create">
             <Button>Create New Article</Button>
           </Link>
@@ -85,10 +102,16 @@ export default function AdminArticlesPage() {
             <TableRow key={index}>
               <TableCell>{article.title}</TableCell>
               <TableCell>{article.description}</TableCell>
-              <TableCell>{new Date(article.date).toLocaleDateString()}</TableCell>
-              <TableCell>{new Date(article.lastModified).toLocaleString()}</TableCell>
               <TableCell>
-                <Link href={`/admin/articles/edit?path=${encodeURIComponent(article.path)}`}>
+                {new Date(article.date).toLocaleDateString()}
+              </TableCell>
+              <TableCell>
+                {new Date(article.lastModified).toLocaleString()}
+              </TableCell>
+              <TableCell>
+                <Link
+                  href={`/admin/articles/edit?path=${encodeURIComponent(article.path)}`}
+                >
                   <Button>Edit</Button>
                 </Link>
               </TableCell>

@@ -1,24 +1,33 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
-import React from 'react';
-import PropTypes from 'prop-types'; // 添加 PropTypes 导入
+import { useState } from "react";
+import { X } from "lucide-react";
+import React from "react";
+import PropTypes from "prop-types"; // 添加 PropTypes 导入
 
-LoginModal.propTypes = { // 添加 props 验证
+LoginModal.propTypes = {
+  // 添加 props 验证
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,
 };
-export default function LoginModal({ isOpen, onClose, onLogin }: { isOpen: boolean; onClose: () => void; onLogin: () => void; }) {
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export default function LoginModal({
+  isOpen,
+  onClose,
+  onLogin,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onLogin: () => void;
+}) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
+    setError("");
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
       if (response.ok) {
@@ -26,11 +35,11 @@ export default function LoginModal({ isOpen, onClose, onLogin }: { isOpen: boole
         onClose();
       } else {
         const data = await response.json();
-        setError(data.message || 'Login failed');
+        setError(data.message || "Login failed");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setError('An error occurred. Please try again.');
+      console.error("Login error:", error);
+      setError("An error occurred. Please try again.");
     }
   };
 
@@ -41,7 +50,10 @@ export default function LoginModal({ isOpen, onClose, onLogin }: { isOpen: boole
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Login</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
             <X size={24} />
           </button>
         </div>
@@ -54,7 +66,10 @@ export default function LoginModal({ isOpen, onClose, onLogin }: { isOpen: boole
             className="w-full p-2 border rounded mb-4"
           />
           {error && <p className="text-red-500 mb-4">{error}</p>}
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
             Login
           </button>
         </form>
@@ -62,4 +77,3 @@ export default function LoginModal({ isOpen, onClose, onLogin }: { isOpen: boole
     </div>
   );
 }
-

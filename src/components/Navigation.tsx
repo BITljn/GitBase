@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { Github } from 'lucide-react'
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import React from 'react'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Github } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import React from "react";
 
 const navItems = [
-  { path: '/', label: 'Home' },
-  { path: '/resources', label: 'Resources' },
-  { path: '/posts', label: 'Articles' },
-]
+  { path: "/", label: "Home" },
+  { path: "/resources", label: "Resources" },
+  { path: "/posts", label: "Articles" },
+];
 
 export function Navigation() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -26,11 +26,11 @@ export function Navigation() {
       if (!isMounted) return;
       setIsLoading(true);
       try {
-        const response = await fetch('/api/check-auth');
+        const response = await fetch("/api/check-auth");
         const data = await response.json();
         if (isMounted) setIsLoggedIn(data.isLoggedIn);
       } catch (error) {
-        console.error('Failed to check auth status:', error);
+        console.error("Failed to check auth status:", error);
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -45,11 +45,11 @@ export function Navigation() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', { method: 'POST' });
+      await fetch("/api/logout", { method: "POST" });
       setIsLoggedIn(false);
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Failed to logout:', error);
+      console.error("Failed to logout:", error);
     }
   };
 
@@ -85,22 +85,23 @@ export function Navigation() {
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
-          {!isLoading && (
-            isLoggedIn ? (
+          {!isLoading &&
+            (isLoggedIn ? (
               <>
                 <Link href="/admin">
                   <Button variant="ghost">Admin</Button>
                 </Link>
-                <Button onClick={handleLogout} variant="outline">Logout</Button>
+                <Button onClick={handleLogout} variant="outline">
+                  Logout
+                </Button>
               </>
             ) : (
               <Link href="/login">
                 <Button>Login</Button>
               </Link>
-            )
-          )}
+            ))}
         </div>
       </div>
     </header>
-  )
+  );
 }

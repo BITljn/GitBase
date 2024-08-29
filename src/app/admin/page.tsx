@@ -1,34 +1,47 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import React from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminPage() {
-  const [resources, setResources] = useState([]);
-  const [newResource, setNewResource] = useState({ name: '', description: '', url: '' });
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [resources, setResources] = useState<
+    { name: string; description: string; url: string }[]
+  >([]);
+  const [newResource, setNewResource] = useState({
+    name: "",
+    description: "",
+    url: "",
+  });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
     try {
-      const response = await fetch('/api/check-auth');
+      const response = await fetch("/api/check-auth");
       const data = await response.json();
       if (!data.isLoggedIn) {
-        router.push('/login');
+        router.push("/login");
       } else {
         setIsLoading(false);
       }
-    } catch (error : unknown) {
+    } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error('Error checking auth:', error);
-        setError('Failed to authenticate. Please try again.');
+        console.error("Error checking auth:", error);
+        setError("Failed to authenticate. Please try again.");
         setIsLoading(false);
       }
     }
@@ -43,21 +56,24 @@ export default function AdminPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/resources?source=github');
+      const response = await fetch("/api/resources?source=github");
       if (!response.ok) {
-        throw new Error('Failed to fetch resources');
+        throw new Error("Failed to fetch resources");
       }
       const data = await response.json();
       setResources(data);
     } catch (error) {
-      console.error('Error fetching resources:', error);
-      setError('Failed to fetch resources. Please try again.');
+      console.error("Error fetching resources:", error);
+      setError("Failed to fetch resources. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number | null = null) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number | null = null
+  ) => {
     const { name, value } = e.target;
     if (index !== null) {
       const updatedResources = [...resources];
@@ -68,30 +84,30 @@ export default function AdminPage() {
     }
   };
 
-  const handleEdit = (index) => {
+  const handleEdit = (index: number) => {
     setEditingIndex(index);
   };
 
-  const handleSave = async (index) => {
-    let updatedResources = [...resources];
+  const handleSave = async (index: number) => {
+    const updatedResources = [...resources];
     if (index === -1) {
       updatedResources.push(newResource);
-      setNewResource({ name: '', description: '', url: '' });
+      setNewResource({ name: "", description: "", url: "" });
     }
     try {
-      const response = await fetch('/api/resources', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/resources", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedResources),
       });
       if (!response.ok) {
-        throw new Error('Failed to save resources');
+        throw new Error("Failed to save resources");
       }
       await fetchResources(); // Fetch the latest data after saving
       setEditingIndex(null);
     } catch (error) {
-      console.error('Error saving resources:', error);
-      setError('Failed to save resources. Please try again.');
+      console.error("Error saving resources:", error);
+      setError("Failed to save resources. Please try again.");
     }
   };
 
@@ -126,21 +142,33 @@ export default function AdminPage() {
             <TableRow key={index}>
               <TableCell>
                 {editingIndex === index ? (
-                  <Input name="name" value={resource.name} onChange={(e) => handleInputChange(e, index)} />
+                  <Input
+                    name="name"
+                    value={resource.name}
+                    onChange={(e) => handleInputChange(e, index)}
+                  />
                 ) : (
                   resource.name
                 )}
               </TableCell>
               <TableCell>
                 {editingIndex === index ? (
-                  <Input name="description" value={resource.description} onChange={(e) => handleInputChange(e, index)} />
+                  <Input
+                    name="description"
+                    value={resource.description}
+                    onChange={(e) => handleInputChange(e, index)}
+                  />
                 ) : (
                   resource.description
                 )}
               </TableCell>
               <TableCell>
                 {editingIndex === index ? (
-                  <Input name="url" value={resource.url} onChange={(e) => handleInputChange(e, index)} />
+                  <Input
+                    name="url"
+                    value={resource.url}
+                    onChange={(e) => handleInputChange(e, index)}
+                  />
                 ) : (
                   resource.url
                 )}
@@ -156,13 +184,28 @@ export default function AdminPage() {
           ))}
           <TableRow>
             <TableCell>
-              <Input name="name" value={newResource.name} onChange={handleInputChange} placeholder="New resource name" />
+              <Input
+                name="name"
+                value={newResource.name}
+                onChange={handleInputChange}
+                placeholder="New resource name"
+              />
             </TableCell>
             <TableCell>
-              <Input name="description" value={newResource.description} onChange={handleInputChange} placeholder="New resource description" />
+              <Input
+                name="description"
+                value={newResource.description}
+                onChange={handleInputChange}
+                placeholder="New resource description"
+              />
             </TableCell>
             <TableCell>
-              <Input name="url" value={newResource.url} onChange={handleInputChange} placeholder="New resource URL" />
+              <Input
+                name="url"
+                value={newResource.url}
+                onChange={handleInputChange}
+                placeholder="New resource URL"
+              />
             </TableCell>
             <TableCell>
               <Button onClick={() => handleSave(-1)}>Add New</Button>

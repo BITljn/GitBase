@@ -1,20 +1,27 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert } from "@/components/ui/alert";
 
 export default function CreateArticlePage() {
-  const [article, setArticle] = useState({ title: '', description: '', content: '', slug: '' });
+  const [article, setArticle] = useState({
+    title: "",
+    description: "",
+    content: "",
+    slug: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleInputChange = (e : React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setArticle({ ...article, [name]: value });
   };
@@ -24,22 +31,21 @@ export default function CreateArticlePage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/articles/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(article),
+      const response = await fetch("/api/articles/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ article }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to create article');
+        throw new Error(data.error || "Failed to create article");
       }
 
-      router.push('/admin/articles');
-    } catch (error : unknown) {
-     
+      router.push("/admin/articles");
+    } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error('Error creating article:', error);
+        console.error("Error creating article:", error);
         setError((error as Error).message);
       }
     } finally {
@@ -50,7 +56,11 @@ export default function CreateArticlePage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Create New Article</h1>
-      {error && <Alert variant="destructive" className="mb-4">{error}</Alert>}
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          {error}
+        </Alert>
+      )}
       <div className="space-y-4">
         <Input
           name="title"
@@ -78,7 +88,7 @@ export default function CreateArticlePage() {
           rows={20}
         />
         <Button onClick={handleSave} disabled={isLoading}>
-          {isLoading ? 'Creating...' : 'Create Article'}
+          {isLoading ? "Creating..." : "Create Article"}
         </Button>
       </div>
     </div>

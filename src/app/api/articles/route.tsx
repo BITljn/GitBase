@@ -1,19 +1,24 @@
-import { NextResponse } from 'next/server';
-import { Octokit } from '@octokit/rest';
-import { fetchSingleArticleFromGithub, fetchArticleJsonObject, fetchAllMarkdownFilesFromGithub } from '@/lib/utils';
+import { NextResponse } from "next/server";
+import { Octokit } from "@octokit/rest";
+import {
+  fetchSingleArticleFromGithub,
+  fetchArticleJsonObject,
+  fetchAllMarkdownFilesFromGithub,
+  updateArticleOnGithub,
+} from "@/lib/utils";
 
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN
+  auth: process.env.GITHUB_TOKEN,
 });
 
-const owner = process.env.GITHUB_OWNER || '';
-const repo = process.env.GITHUB_REPO || '';
-const articlesJsonPath = 'data/json/articles.json';
+const owner = process.env.GITHUB_OWNER || "";
+const repo = process.env.GITHUB_REPO || "";
+const articlesJsonPath = "data/json/articles.json";
 
-export async function GET(request : Request) {
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const sync = searchParams.get('sync');
-  const path = searchParams.get('path');
+  const sync = searchParams.get("sync");
+  const path = searchParams.get("path");
 
   try {
     if (path) {
@@ -22,21 +27,27 @@ export async function GET(request : Request) {
       if (article) {
         return NextResponse.json(article);
       } else {
-        return NextResponse.json({ error: 'Fetch article failed' }, { status: 404 });
+        return NextResponse.json(
+          { error: "Fetch article failed" },
+          { status: 404 }
+        );
       }
-    } else if (sync === 'true') {
+    } else if (sync === "true") {
       await syncArticles();
     }
 
-    const articleJson = await fetchArticleJsonObject()
+    const articleJson = await fetchArticleJsonObject();
     return NextResponse.json(articleJson);
   } catch (error) {
-    console.error('Error fetching articles:', error);
-    return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
+    console.error("Error fetching articles:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch articles" },
+      { status: 500 }
+    );
   }
 }
 
-export async function POST(request : Request) {
+export async function POST(request: Request) {
   const { article } = await request.json();
 
   try {
@@ -46,10 +57,13 @@ export async function POST(request : Request) {
     // Sync articles
     await syncArticles();
 
-    return NextResponse.json({ message: 'Article updated successfully' });
+    return NextResponse.json({ message: "Article updated successfully" });
   } catch (error) {
-    console.error('Error updating article:', error);
-    return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
+    console.error("Error updating article:", error);
+    return NextResponse.json(
+      { error: "Failed to update article" },
+      { status: 500 }
+    );
   }
 }
 
@@ -62,21 +76,23 @@ async function syncArticles() {
     }
 
     // 获取每个 article 的简要内容信息
-    const articles = await Promise.all(mdFiles.map(async file => {
-      // Fetch single article from github
-      const article = await fetchSingleArticleFromGithub(file.path);
-      if (!article) {
-        return;
-      }
+    const articles = await Promise.all(
+      mdFiles.map(async (file) => {
+        // Fetch single article from github
+        const article = await fetchSingleArticleFromGithub(file.path);
+        if (!article) {
+          return;
+        }
 
-      return {
-        title: article.title,
-        description: article.description,
-        date: article.date,
-        lastModified: article.lastModified,
-        path: article.path,
-      };
-    }));
+        return {
+          title: article.title,
+          description: article.description,
+          date: article.date,
+          lastModified: article.lastModified,
+          path: article.path,
+        };
+      })
+    );
 
     // Update articles.json, 要先获取老的 article 的 sha, 用新的 articles.json 内容更新之
     const { data: currentFile } = await octokit.repos.getContent({
@@ -84,8 +100,8 @@ async function syncArticles() {
       repo,
       path: articlesJsonPath,
     });
-    if (Array.isArray(currentFile) || currentFile.type !== 'file') {
-      console.error('Error syncing articles:', 'articles.json is not a file');
+    if (Array.isArray(currentFile) || currentFile.type !== "file") {
+      console.error("Error syncing articles:", "articles.json is not a file");
       return;
     }
 
@@ -93,52 +109,41 @@ async function syncArticles() {
       owner,
       repo,
       path: articlesJsonPath,
-      message: 'Sync articles',
-      content: Buffer.from(JSON.stringify(articles, null, 2)).toString('base64'), // base64 编码
+      message: "Sync articles",
+      content: Buffer.from(JSON.stringify(articles, null, 2)).toString(
+        "base64"
+      ), // base64 编码
       sha: currentFile.sha,
     });
-
   } catch (error) {
-    console.error('Error syncing articles:', error);
+    console.error("Error syncing articles:", error);
     throw error;
   }
 }
 
-async function updateMdFile(article) {
+async function updateMdFile(article: {
+  path: string;
+  title: string;
+  description: string;
+  content: string;
+}) {
   try {
-    const { data: currentFile } = await octokit.repos.getContent({
-      owner,
-      repo,
-      path: article.path,
-    });
-    if (Array.isArray(currentFile) || currentFile.type !== 'file') {
-      console.error('Error updating MD file:', 'File is not a file');
-      return;
+    const data = await fetchSingleArticleFromGithub(article.path);
+    if (!data) {
+      throw new Error("Article not found");
     }
 
-    const currentContent = Buffer.from(currentFile.content, 'base64').toString('utf8');
-    const { data: frontMatter, content: articleContent } = matter(currentContent);
-
-    const updatedFrontMatter = {
-      ...frontMatter,
+    const updatedArticle = {
+      ...data,
       title: article.title,
       description: article.description,
+      content: article.content,
       lastModified: new Date().toISOString(),
     };
 
-    const updatedContent = matter.stringify(article.content, updatedFrontMatter);
-
-    await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path: article.path,
-      message: `Update article: ${article.title}`,
-      content: Buffer.from(updatedContent).toString('base64'),
-      sha: currentFile.sha,
-    });
-
+    await updateArticleOnGithub(updatedArticle);
   } catch (error) {
-    console.error('Error updating MD file:', error);
+    console.error("Error updating MD file:", error);
     throw error;
   }
 }

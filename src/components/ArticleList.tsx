@@ -1,26 +1,32 @@
 // components/ArticleList.js
-import React from 'react'
-import Link from 'next/link'
+import React from "react";
+import Link from "next/link";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card"
-import { article } from '@/types/resources'
+} from "@/components/ui/card";
+import { articleJsonMeta } from "@/types/resources";
 
 interface ArticleListProps {
-  articles: article[]
-  showMoreLink?: boolean
+  articles: articleJsonMeta[];
+  showMoreLink?: boolean;
 }
 
-export default function ArticleList({ articles, showMoreLink = true } : ArticleListProps) {
+export default function ArticleList({
+  articles,
+  showMoreLink = true,
+}: ArticleListProps) {
   return (
     <section>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold tracking-tighter">Articles</h2>
         {showMoreLink && (
-          <Link href="/posts" className="text-blue-600 hover:text-blue-800 transition-colors">
+          <Link
+            href="/posts"
+            className="text-blue-600 hover:text-blue-800 transition-colors"
+          >
             More articles →
           </Link>
         )}
@@ -29,12 +35,11 @@ export default function ArticleList({ articles, showMoreLink = true } : ArticleL
         {articles.map(({ id, title, description }) => (
           <Card key={id}>
             <CardHeader>
-              <Link 
+              <Link
                 href={`/posts/${id}`}
                 className="text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center gap-1"
               >
-                <CardTitle>{title}</CardTitle>
-                →
+                <CardTitle>{title}</CardTitle>→
               </Link>
               <CardDescription>{description}</CardDescription>
             </CardHeader>
@@ -42,5 +47,5 @@ export default function ArticleList({ articles, showMoreLink = true } : ArticleL
         ))}
       </div>
     </section>
-  )
+  );
 }

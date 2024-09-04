@@ -1,8 +1,8 @@
-import { FontMatter } from "@/types/resources";
+import { FontMatter } from "types/resources";
 import yaml from "js-yaml";
 import { marked } from "marked";
 import { Octokit } from "@octokit/rest";
-import { articlesJsonPath, mdFolderPath } from "@/lib/constants";
+import { articlesJsonPath, mdFolderPath } from "lib/constants";
 export function getMetaAndHtmlFromArticle(content: string): {
   metadata: FontMatter;
   htmlContent: string;
@@ -60,7 +60,6 @@ export async function fetchSingleArticleFromGithub(path: string): Promise<{
       per_page: 1,
     });
 
-    // TODO: 可以不成功
     if (!Array.isArray(commits) || commits.length === 0) {
       console.error("Error fetching last commits");
       return null;

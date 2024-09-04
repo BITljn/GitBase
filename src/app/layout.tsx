@@ -1,8 +1,10 @@
 import "./globals.css";
 import React from "react";
 import { Inter } from "next/font/google";
-import { Layout } from "@/components/Layout";
+import { Layout } from "components/Layout";
 import { Metadata } from "next";
+import BaiDuAnalytics from "app/BaiDuAnalytics";
+import GoogleAnalytics from "app/GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +26,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body className={inter.className}>
         <Layout>{children}</Layout>
+        {process.env.NODE_ENV === "development" ? (
+          <></>
+        ) : (
+          <>
+            <GoogleAnalytics />
+            <BaiDuAnalytics />
+          </>
+        )}
       </body>
     </html>
   );

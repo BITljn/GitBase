@@ -2,9 +2,9 @@
 import React from "react";
 import fs from "fs";
 import path from "path";
-import { getSortedPostsData } from "@/lib/posts";
-import ResourceList from "@/components/ResourceList";
-import ArticleList from "@/components/ArticleList";
+import { getSortedPostsData } from "lib/posts";
+import ResourceList from "components/ResourceList";
+import ArticleList from "components/ArticleList";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

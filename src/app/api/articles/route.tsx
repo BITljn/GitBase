@@ -5,15 +5,15 @@ import {
   fetchArticleJsonObject,
   fetchAllMarkdownFilesFromGithub,
   updateArticleOnGithub,
-} from "@/lib/github";
-
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
-});
+} from "lib/github";
 
 const owner = process.env.GITHUB_OWNER || "";
 const repo = process.env.GITHUB_REPO || "";
 const articlesJsonPath = "data/json/articles.json";
+
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+});
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -77,7 +77,7 @@ async function syncArticles() {
 
     // 获取每个 article 的简要内容信息
     const articles = await Promise.all(
-      mdFiles.map(async (file) => {
+      mdFiles.map(async (file: { path: string }) => {
         // Fetch single article from github
         const article = await fetchSingleArticleFromGithub(file.path);
         if (!article) {

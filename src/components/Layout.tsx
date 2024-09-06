@@ -1,6 +1,6 @@
 // components/Layout.js
-import { Navigation } from "./Navigation";
-import { Footer } from "@/components/Footer";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "./Footer";
 import React from "react";
 
 export function Layout({ children }: { children: React.ReactNode }) {

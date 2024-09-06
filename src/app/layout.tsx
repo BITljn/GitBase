@@ -1,10 +1,14 @@
 import "./globals.css";
 import React from "react";
 import { Inter } from "next/font/google";
-import { Layout } from "components/Layout";
+import { Layout } from "@/components/Layout";
 import { Metadata } from "next";
-import BaiDuAnalytics from "app/BaiDuAnalytics";
-import GoogleAnalytics from "app/GoogleAnalytics";
+import BaiDuAnalytics from "@/app/BaiDuAnalytics";
+import GoogleAnalytics from "@/app/GoogleAnalytics";
+import { NextAuthProvider } from "@/app/providers";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { TailwindIndicator } from "@/components/TailwindIndicator";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,9 +27,17 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Layout>{children}</Layout>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <NextAuthProvider>
+            <Layout>{children}</Layout>
+          </NextAuthProvider>
+
+          <Toaster />
+          <TailwindIndicator />
+        </ThemeProvider>
+
         {process.env.NODE_ENV === "development" ? (
           <></>
         ) : (

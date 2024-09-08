@@ -7,6 +7,7 @@ import { Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const navItems = [
   { path: "/", label: "Home" },
@@ -60,6 +61,8 @@ export function Navigation() {
           <Link href="/" className="flex items-center space-x-2">
             <span className="inline-block font-bold">GitBase</span>
           </Link>
+
+          {/* Home/Resource/Articles */}
           <nav className="hidden md:flex gap-6">
             {navItems.map((item) => (
               <Link
@@ -75,9 +78,12 @@ export function Navigation() {
             ))}
           </nav>
         </div>
+
+        {/*Github/Login(logout) */}
         <div className="flex items-center gap-4">
+          <ThemeSwitcher />
           <Link
-            href="https://github.com/qiayue/gitbase"
+            href="https://github.com/BITljn/GitBase"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground"
@@ -85,6 +91,7 @@ export function Navigation() {
             <Github className="h-5 w-5" />
             <span className="sr-only">GitHub</span>
           </Link>
+
           {!isLoading &&
             (isLoggedIn ? (
               <>

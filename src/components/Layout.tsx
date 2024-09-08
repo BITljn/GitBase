@@ -1,4 +1,3 @@
-// components/Layout.js
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "./Footer";
 import React from "react";
